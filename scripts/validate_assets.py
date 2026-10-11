@@ -78,8 +78,8 @@ assert ru.keys() == en.keys()
 assert be.keys() == ru.keys()
 
 assert len(list((ASSETS / 'blockstates').glob('*.json'))) == 85
-assert len(list((DATA / 'recipe').glob('*.json'))) == 113
-print(f'PASS: {count} JSON files; texture/model references and atlas coverage, geometry, 85 block drops and 113 recipes.')
+assert len(list((DATA / 'recipe').glob('*.json'))) == 134
+print(f'PASS: {count} JSON files; texture/model references and atlas coverage, geometry, 85 block drops and 134 recipes.')
 
 from structure_nbt import read
 

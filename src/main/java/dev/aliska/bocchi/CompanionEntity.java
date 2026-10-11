@@ -502,6 +502,29 @@ public class CompanionEntity extends WolfEntity implements PolymerEntity {
                 return ActionResult.SUCCESS;
             }
 
+            // Взаимодействие с медиатором: весёлая реакция и аккорд
+            if (BocchiMod.GUITAR_PICK != null && held.isOf(BocchiMod.GUITAR_PICK)) {
+                happyTicks = 80;
+                getWorld().playSound(null, getBlockPos(), SoundEvents.BLOCK_NOTE_BLOCK_GUITAR.value(), SoundCategory.PLAYERS, 1.2F, 1.2F);
+                if (getWorld() instanceof ServerWorld sw) {
+                    sw.spawnParticles(ParticleTypes.NOTE, getX(), getY() + 0.8, getZ(), 4, 0.25, 0.25, 0.25, 0.0);
+                }
+                jump();
+                return ActionResult.SUCCESS;
+            }
+
+            // Взаимодействие с трусиками героини: смущённая реакция и реплика!
+            Item kindPanties = BocchiMod.PANTIES.get(kind());
+            if (kindPanties != null && held.isOf(kindPanties)) {
+                happyTicks = 100;
+                getWorld().playSound(null, getBlockPos(), SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 1.0F, 1.8F);
+                if (getWorld() instanceof ServerWorld sw) {
+                    sw.spawnParticles(ParticleTypes.HEART, getX(), getY() + 0.8, getZ(), 6, 0.3, 0.2, 0.3, 0.0);
+                }
+                player.sendMessage(Text.translatable("message.bocchi.panties.react." + kind().id), true);
+                return ActionResult.SUCCESS;
+            }
+
             // Торговля с Рё: меняет изумруд на случайную фигурку героинь
             if (kind() == CharacterKind.RYO && held.isOf(Items.EMERALD)) {
                 happyTicks = 60;
@@ -534,6 +557,22 @@ public class CompanionEntity extends WolfEntity implements PolymerEntity {
                 consume(player, held);
                 heal(6.0F);
                 getWorld().sendEntityStatus(this, (byte) 7);
+                if (isTamed() && player.equals(getOwner()) && growthTicks == 0 && random.nextFloat() < 0.25F) {
+                    giveGift(player);
+                }
+                return ActionResult.SUCCESS;
+            }
+
+            // Угощение взрослой спутницы любимой едой во время кулдауна размножения
+            if (held.isOf(kind().treat) && growthTicks == 0 && (breedingCooldown > 0 || pairingTicks > 0)) {
+                consume(player, held);
+                happyTicks = 60;
+                if (getWorld() instanceof ServerWorld sw) {
+                    sw.spawnParticles(ParticleTypes.HAPPY_VILLAGER, getX(), getY() + 0.5, getZ(), 4, 0.2, 0.2, 0.2, 0.0);
+                }
+                if (isTamed() && player.equals(getOwner()) && random.nextFloat() < 0.35F) {
+                    giveGift(player);
+                }
                 return ActionResult.SUCCESS;
             }
 
@@ -565,6 +604,48 @@ public class CompanionEntity extends WolfEntity implements PolymerEntity {
     private void consume(PlayerEntity player, ItemStack stack) {
         if (!player.getAbilities().creativeMode) {
             stack.decrement(1);
+        }
+    }
+
+    private void giveGift(PlayerEntity player) {
+        float roll = random.nextFloat();
+        ItemStack gift;
+        if (roll < 0.15F) {
+            Item p = BocchiMod.PANTIES.get(kind());
+            gift = new ItemStack(p != null ? p : kind().treat);
+        } else if (roll < 0.40F && BocchiMod.GUITAR_PICK != null) {
+            gift = new ItemStack(BocchiMod.GUITAR_PICK);
+        } else if (roll < 0.60F && BocchiMod.STARRY_TICKET != null) {
+            gift = new ItemStack(BocchiMod.STARRY_TICKET);
+        } else if (roll < 0.80F && BocchiMod.SODA != null) {
+            gift = new ItemStack(BocchiMod.SODA);
+        } else {
+            gift = new ItemStack(kind().treat, 1 + random.nextInt(2));
+        }
+        if (!player.giveItemStack(gift)) {
+            player.dropItem(gift, false);
+        }
+        getWorld().playSound(null, getBlockPos(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.8F, 1.3F);
+        player.sendMessage(Text.translatable("message.bocchi.gift." + kind().id), false);
+    }
+
+    @Override
+    public void onDeath(net.minecraft.entity.damage.DamageSource damageSource) {
+        super.onDeath(damageSource);
+        if (getWorld() instanceof ServerWorld) {
+            Item panties = BocchiMod.PANTIES.get(kind());
+            if (panties != null) {
+                dropItem(panties);
+            }
+            dropStack(new ItemStack(kind().treat, 1 + random.nextInt(3)));
+            if (random.nextBoolean()) {
+                Item fig = BocchiMod.FIGURINES.get(kind());
+                if (fig != null) {
+                    dropItem(fig);
+                }
+            } else if (BocchiMod.GUITAR_PICK != null) {
+                dropItem(BocchiMod.GUITAR_PICK);
+            }
         }
     }
 

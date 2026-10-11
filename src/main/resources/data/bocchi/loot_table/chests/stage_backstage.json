@@ -5,7 +5,7 @@
       "rolls": {
         "type": "minecraft:uniform",
         "min": 4,
-        "max": 7
+        "max": 8
       },
       "entries": [
         {
@@ -71,32 +71,87 @@
         {
           "type": "minecraft:item",
           "name": "bocchi:rehearsal_bell",
-          "weight": 1,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 1
-              }
-            }
-          ]
+          "weight": 2
         },
         {
           "type": "minecraft:item",
           "name": "bocchi:mango_box_hat",
-          "weight": 1,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 1
-              }
-            }
-          ]
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:starry_shirt",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:shuka_blouse",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:shuka_skirt",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:shimokitazawa_vest",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:shimokitazawa_skirt",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:maid_headband",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:maid_dress",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:guitar_pick",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:starry_ticket",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:shimokitazawa_soda",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:kikuri_drink",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:bocchi_panties",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:nijika_panties",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:ryo_panties",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:kita_panties",
+          "weight": 1
         }
       ]
     }

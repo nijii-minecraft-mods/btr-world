@@ -9,17 +9,18 @@ RESOURCES = ROOT / 'src/main/resources'
 LANG = json.loads((RESOURCES / 'assets/bocchi/lang/ru_ru.json').read_text(encoding='utf-8'))
 
 VANILLA_NAMES = dict(zip(
-    'amethyst_shard black_dye blue_dye brown_dye clay_ball cookie glass_pane glow_ink_sac glowstone_dust '
-    'gold_ingot gold_nugget golden_apple iron_ingot iron_nugget leather leather_boots leather_chestplate '
-    'leather_helmet leather_leggings lime_wool note_block oak_planks oak_slab paper pink_dye pink_wool '
-    'quartz red_dye redstone slime_ball smooth_stone stick string white_concrete white_dye white_wool yellow_dye'.split(),
-    ['осколок аметиста', 'чёрный краситель', 'синий краситель', 'коричневый краситель', 'комок глины',
-     'печенье', 'стеклянная панель', 'светящийся чернильный мешок', 'светокаменная пыль', 'золотой слиток',
-     'кусочек золота', 'золотое яблоко', 'железный слиток', 'кусочек железа', 'кожа', 'кожаные ботинки',
-     'кожаная куртка', 'кожаный шлем', 'кожаные штаны', 'лаймовая шерсть', 'нотный блок', 'дубовые доски',
-     'дубовая плита', 'бумага', 'розовый краситель', 'розовая шерсть', 'кварц', 'красный краситель',
-     'редстоун', 'слизь', 'гладкий камень', 'палка', 'нить', 'белый бетон', 'белый краситель', 'белая шерсть',
-     'жёлтый краситель']
+    'amethyst_shard black_dye black_wool blue_dye blue_wool brown_dye clay_ball cookie cyan_dye flint glass_bottle '
+    'glass_pane glow_berries glow_ink_sac glowstone_dust gold_ingot gold_nugget golden_apple gray_dye gray_wool '
+    'iron_ingot iron_nugget leather leather_boots leather_chestplate leather_helmet leather_leggings light_gray_dye '
+    'light_gray_wool lime_wool note_block oak_planks oak_slab paper pink_dye pink_wool purple_wool quartz red_dye '
+    'red_wool redstone slime_ball smooth_stone stick string sugar sweet_berries white_concrete white_dye white_wool '
+    'yellow_dye yellow_wool green_dye'.split(),
+    ['осколок аметиста', 'чёрный краситель', 'чёрная шерсть', 'синий краситель', 'синяя шерсть', 'коричневый краситель', 'комок глины', 'печенье', 'бирюзовый краситель', 'кремень', 'пузырёк',
+     'стеклянная панель', 'светящиеся ягоды', 'светящийся чернильный мешок', 'светокаменная пыль', 'золотой слиток', 'кусочек золота', 'золотое яблоко', 'серый краситель', 'серая шерсть',
+     'железный слиток', 'кусочек железа', 'кожа', 'кожаные ботинки', 'кожаная куртка', 'кожаный шлем', 'кожаные штаны', 'светло-серый краситель',
+     'светло-серая шерсть', 'лаймовая шерсть', 'нотный блок', 'дубовые доски', 'дубовая плита', 'бумага', 'розовый краситель', 'розовая шерсть', 'фиолетовая шерсть', 'кварц', 'красный краситель',
+     'красная шерсть', 'редстоун', 'слизь', 'гладкий камень', 'палка', 'нить', 'сахар', 'сладкие ягоды', 'белый бетон', 'белый краситель', 'белая шерсть',
+     'жёлтый краситель', 'жёлтая шерсть', 'зелёный краситель']
 ))
 
 
@@ -46,7 +47,13 @@ def main():
         elif ident in [
             'mango_box_hat', 'nijika_ahoge', 'bocchi_hairclip', 'nijika_ribbon',
             'ryo_hairclip', 'kita_hairclip', 'tsuchinoko_hat',
-            'stop_sign', 'pink_hood', 'pink_jacket', 'pink_pants', 'pink_shoes'
+            'stop_sign', 'pink_hood', 'pink_jacket', 'pink_pants', 'pink_shoes',
+            'shuka_blouse', 'shuka_skirt', 'shuka_shoes',
+            'shimokitazawa_vest', 'shimokitazawa_skirt', 'starry_shirt',
+            'maid_headband', 'maid_dress', 'maid_skirt',
+            'bocchi_panties', 'nijika_panties', 'ryo_panties', 'kita_panties',
+            'seika_panties', 'kikuri_panties', 'pa_san_panties',
+            'guitar_pick', 'kikuri_drink', 'empty_pack', 'shimokitazawa_soda', 'starry_ticket'
         ]:
             group = 'Одежда и аксессуары'
         else:
@@ -108,5 +115,5 @@ def main():
     print(f'Craft guide: {total_recipes} recipes.')
 
 
-if __name__ == '__main__':
-    main()
+main()
+

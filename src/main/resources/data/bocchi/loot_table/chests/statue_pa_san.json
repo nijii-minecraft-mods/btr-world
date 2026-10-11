@@ -1,0 +1,69 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:pa_san_panties",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:pa_san_figurine",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 2,
+        "max": 5
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:dried_kelp",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 8
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:guitar_pick",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:starry_ticket",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:shimokitazawa_soda",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "bocchi:kikuri_drink",
+          "weight": 2
+        }
+      ]
+    }
+  ]
+}

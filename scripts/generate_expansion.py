@@ -114,8 +114,15 @@ for kind in ['bocchi','nijika','ryo','kita','seika','kikuri','pa_san']:
   fill(1,6,4,2,10,7,hair);fill(8,6,4,9,10,7,hair)
   fill(2,6,7,8,10,8,hair)
  for x,z in [(1,1),(9,1),(1,9),(9,9)]:blocks[x,2,z]=f'bocchi:{kind}_base_lamp'
+ extra={(5,2,2):{'id':(8,'minecraft:chest'),'LootTable':(8,f'bocchi:chests/statue_{kind}')}}
+ blocks[5,2,2]='minecraft:chest'
  palette=sorted(set(blocks.values()));states={name:i for i,name in enumerate(palette)}
- nbt={'DataVersion':(3,3955),'size':(9,(3,[11,18,11])),'palette':(9,(10,[{'Name':(8,name)} for name in palette])),'blocks':(9,(10,[{'pos':(9,(3,list(pos))),'state':(3,states[mat])} for pos,mat in sorted(blocks.items())])),'entities':(9,(10,[]))}
+ block_entries=[]
+ for pos,mat in sorted(blocks.items()):
+  entry={'pos':(9,(3,list(pos))),'state':(3,states[mat])}
+  if pos in extra:entry['nbt']=(10,extra[pos])
+  block_entries.append(entry)
+ nbt={'DataVersion':(3,3955),'size':(9,(3,[11,18,11])),'palette':(9,(10,[{'Name':(8,name)} for name in palette])),'blocks':(9,(10,block_entries)),'entities':(9,(10,[]))}
  path=D/f'structure/statues/{kind}.nbt';path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(gzip.compress(b'\x0a\0\0'+payload(10,nbt),mtime=0))
 js(D/'worldgen/template_pool/statues.json',{'name':'bocchi:statues','fallback':'minecraft:empty','elements':[{'weight':1,'element':{'element_type':'minecraft:single_pool_element','location':'bocchi:statues/'+kind,'processors':'minecraft:empty','projection':'rigid'}} for kind in ['bocchi','nijika','ryo','kita','seika','kikuri','pa_san']]})
 js(D/'worldgen/structure/heroine_statue.json',{'type':'minecraft:jigsaw','biomes':'#bocchi:has_statue','step':'surface_structures','spawn_overrides':{},'terrain_adaptation':'beard_thin','start_pool':'bocchi:statues','size':0,'start_height':{'absolute':0},'project_start_to_heightmap':'WORLD_SURFACE_WG','max_distance_from_center':32,'use_expansion_hack':False})

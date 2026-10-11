@@ -26,7 +26,7 @@
   - Все тесты: `python3 -m unittest discover -s tests -v`
   - Отдельные модули: `python3 -m unittest tests/test_stages.py`, `python3 -m unittest tests/test_modrinth_release.py`.
 - Валидация ресурсов и рецептов:
-  - `python3 scripts/validate_assets.py` — проверяет 580+ JSON, пути текстур в атласе, координаты геометрии `[-16, 32]`, отсутствие конфликтов среди 113 рецептов, NBT статуй и 3 локализации (RU/BE/EN).
+  - `python3 scripts/validate_assets.py` — проверяет 630+ JSON, пути текстур в атласе, координаты геометрии `[-16, 32]`, отсутствие конфликтов среди 134 рецептов, NBT статуй и 3 локализации (RU/BE/EN).
 - Валидация runtime и пулов Polymer (headless сервер до шага EULA):
   - `python3 scripts/validate_runtime.py` — проверка 110 состояний Polymer-блоков, кэшей коллизий, структур сцен и генерации ресурс-пака.
   - `python3 scripts/validate_runtime.py --exhausted` — проверка безопасного fallback при исчерпании пулов блоков Polymer.
@@ -38,7 +38,7 @@
 
 - Справочник крафтов: `python3 scripts/generate_craft_guide.py` — генерирует `docs/CRAFTING.md` и обновляет блок рецептов в `README.md` напрямую из JSON. **Не редактируйте рецепты в README вручную.**
 - Синхронизация имён: `python3 scripts/standardize_names.py` — единые названия сущностей, токенов и режимов в `ru_ru.json`, `be_by.json`, `en_us.json`.
-- Процедурные генераторы: `scripts/generate_assets.py`, `scripts/generate_stages.py`, `scripts/generate_room_decor.py`, `scripts/generate_equipment.py`.
+- Процедурные генераторы: `scripts/generate_assets.py`, `scripts/generate_stages.py`, `scripts/generate_room_decor.py`, `scripts/generate_equipment.py`, `scripts/generate_loot_and_costumes.py`.
 
 # Архитектура и ограничения
 

@@ -12,9 +12,13 @@ Bocchi, Nijika, Ryo and Kita come in both tsum-style plush and chibi forms: **ei
 - Feed babies to shorten the remaining growth time.
 - Bocchi flees danger and hides; Ryo eats grass and trades figurines; Kita sparkles and provides night vision; Nijika offers nearby haste and helps calm Bocchi; Seika protects with resistance; Kikuri grants strength and drinks honey; PA-san grants night vision and slows hostile mobs.
 
-## Rehearsal room
+## Decor, costumes and loot
 
-There are **85 blocks and 113 crafting recipes**, including 63 colour-palette blocks, figurines, drums, microphones, a guitar stand, amplifiers, a cardboard box you can sit in, plush toys, posters, a neon star and fairy lights. Costumes and accessories are decorative.
+There are **85 blocks and 134 crafting recipes**, including 63 colour-palette blocks, figurines, drums, microphones, a guitar stand, amplifiers, a cardboard box you can sit in, plush toys, posters, a neon star and fairy lights. Includes Shuka and Shimokitazawa high school uniforms, STARRY staff t-shirts, the maid cafe dress, and Bocchi's pink tracksuit.
+
+**Unique panties for each of the 7 heroines** can be worn as equipment or placed on your head for unique buffs. Companions show unique expressive reactions when shown their items!
+
+**Club loot and souvenirs**: Kessoku guitar pick (guitar riff sound on click), Kikuri's juice box (gives strength and punk bravery), Shimokitazawa soda, and STARRY concert tickets. Items can be found in backstage chests, hidden altars beneath giant heroine statues, vanilla dungeons and villages, given as friendly gifts by fed companions, or dropped upon death.
 
 Adult tame companions can approach their matching instrument and perform for **90–150 seconds**, with note particles and original note-block phrases. Nijika plays percussion, Kita flute tones, Bocchi guitar, Ryo and Kikuri bass, Seika livehouse rhythm, and PA-san synth beats. No anime soundtrack recordings, lyrics or song transcriptions are included. Models currently have no animated hands.
 

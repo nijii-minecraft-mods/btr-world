@@ -7,7 +7,7 @@ im=Image.new('RGB',(2648,670),'#f7f3ed');d=ImageDraw.Draw(im)
 f=lambda n:ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',n)
 d.text((28,20),'BTR WORLD · большие статуи',font=f(30),fill='#373145')
 d.text((28,65),'Шаблоны 11 × 18 × 11 блоков · редкие природные структуры',font=f(18),fill='#766e80')
-colours={'pink_terracotta':'#a76666','white_terracotta':'#d2b3a3','black_concrete':'#272331','white_concrete':'#e5e3da','red_concrete':'#b4434d','light_blue_concrete':'#72bdd3','yellow_concrete':'#e3b840','stone_bricks':'#77787c','smooth_stone':'#b4b1ab','green_concrete':'#5c733b','purple_concrete':'#792e79'}
+colours={'pink_terracotta':'#a76666','white_terracotta':'#d2b3a3','black_concrete':'#272331','white_concrete':'#e5e3da','red_concrete':'#b4434d','light_blue_concrete':'#72bdd3','yellow_concrete':'#e3b840','stone_bricks':'#77787c','smooth_stone':'#b4b1ab','green_concrete':'#5c733b','purple_concrete':'#792e79','chest':'#9a6b39'}
 hero={'bocchi':'#efa1c4','nijika':'#efc657','ryo':'#526fa4','kita':'#ca5258','seika':'#f5d57b','kikuri':'#9b3f83','pa_san':'#363545'}
 names={'bocchi':'Хитори','nijika':'Нидзика','ryo':'Рё','kita':'Кита','seika':'Сейка','kikuri':'Кикури','pa_san':'ПА-сан'}
 faces=[((0,0,-1),[(0,0,0),(1,0,0),(1,1,0),(0,1,0)],.9),((1,0,0),[(1,0,0),(1,0,1),(1,1,1),(1,1,0)],.73),((0,1,0),[(0,1,0),(1,1,0),(1,1,1),(0,1,1)],1.08)]

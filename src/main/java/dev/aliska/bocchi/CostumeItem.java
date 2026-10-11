@@ -15,20 +15,24 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 /**
- * Декоративный розовый костюм Боччи на базе кожаной брони.
- * Не даёт брони или иных боевых характеристик.
+ * Декоративные костюмы и одежда (костюм Боччи, школьные формы, форма персонала STARRY, костюм горничной).
+ * На базе кожаной брони с настраиваемым цветом красителя. Не дают боевых характеристик.
  */
-public final class CostumeItem extends Item implements PolymerItem, Equipment {
+public class CostumeItem extends Item implements PolymerItem, Equipment {
     private final EquipmentSlot slot;
     private final Item appearance;
 
-    public CostumeItem(EquipmentSlot slot, Item appearance) {
+    public CostumeItem(EquipmentSlot slot, Item appearance, int color) {
         super(new Item.Settings()
             .maxCount(1)
-            .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(0xefa1c4, false))
+            .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(color, false))
             .component(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT));
         this.slot = slot;
         this.appearance = appearance;
+    }
+
+    public CostumeItem(EquipmentSlot slot, Item appearance) {
+        this(slot, appearance, 0xefa1c4);
     }
 
     @Override

@@ -50,9 +50,15 @@ public class BocchiMod implements ModInitializer {
     public static final Set<EntityType<?>> PLUSH_TYPES = new HashSet<>();
     public static final Map<String, Item> MODELS = new HashMap<>();
     public static final Map<CharacterKind, Item> FIGURINES = new EnumMap<>(CharacterKind.class);
+    public static final Map<CharacterKind, Item> PANTIES = new EnumMap<>(CharacterKind.class);
     public static final Map<String, Block> BLOCKS = new LinkedHashMap<>();
     public static final List<Item> ITEMS = new ArrayList<>();
     public static Item BOX_MODEL;
+    public static Item EMPTY_PACK;
+    public static Item KIKURI_DRINK;
+    public static Item SODA;
+    public static Item GUITAR_PICK;
+    public static Item STARRY_TICKET;
 
     /**
      * Создаёт идентификатор с пространством имён мода "bocchi".
@@ -207,6 +213,50 @@ public class BocchiMod implements ModInitializer {
         item("pink_pants", new CostumeItem(EquipmentSlot.LEGS, Items.LEATHER_LEGGINGS));
         item("pink_shoes", new CostumeItem(EquipmentSlot.FEET, Items.LEATHER_BOOTS));
 
+        // Школьная форма Сюка
+        item("shuka_blouse", new CostumeItem(EquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 0xe6e8ee));
+        item("shuka_skirt", new CostumeItem(EquipmentSlot.LEGS, Items.LEATHER_LEGGINGS, 0x2c354d));
+        item("shuka_shoes", new CostumeItem(EquipmentSlot.FEET, Items.LEATHER_BOOTS, 0x3d2314));
+
+        // Школьная форма Симокитадзавы
+        item("shimokitazawa_vest", new CostumeItem(EquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 0xd8c89d));
+        item("shimokitazawa_skirt", new CostumeItem(EquipmentSlot.LEGS, Items.LEATHER_LEGGINGS, 0x384358));
+
+        // Мерч и форма персонала STARRY
+        item("starry_shirt", new CostumeItem(EquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 0x202026));
+
+        // Костюм горничной со школьного фестиваля
+        item("maid_headband", new DecorativeHatItem("maid_headband"));
+        item("maid_dress", new CostumeItem(EquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 0x1a1a1f));
+        item("maid_skirt", new CostumeItem(EquipmentSlot.LEGS, Items.LEATHER_LEGGINGS, 0x1a1a1f));
+
+        // Уникальные трусики 7 героинь
+        Map<CharacterKind, Integer> pantyColors = Map.of(
+            CharacterKind.BOCCHI, 0xf3a4c8,
+            CharacterKind.NIJIKA, 0xf0ce62,
+            CharacterKind.RYO, 0x4b6d9b,
+            CharacterKind.KITA, 0xc94b57,
+            CharacterKind.SEIKA, 0x252528,
+            CharacterKind.KIKURI, 0x8e3579,
+            CharacterKind.PA_SAN, 0x323140
+        );
+        for (CharacterKind kind : CharacterKind.values()) {
+            String name = kind.id + "_panties";
+            PantiesItem item = new PantiesItem(kind, pantyColors.get(kind));
+            item(name, item);
+            PANTIES.put(kind, item);
+        }
+
+        // Интерактивный лут и мерч
+        GUITAR_PICK = item("guitar_pick", new GuitarPickItem());
+        KIKURI_DRINK = item("kikuri_drink", new KikuriDrinkItem());
+        EMPTY_PACK = item("empty_pack", new EmptyPackItem());
+        SODA = item("shimokitazawa_soda", new SodaItem());
+        STARRY_TICKET = item("starry_ticket", new StarryTicketItem());
+
+        // Внедрение лута мода в ванильные структуры мира
+        registerLootInjection();
+
         // Регистрация серверной вкладки инвентаря Creative через Polymer
         PolymerItemGroupUtils.registerPolymerItemGroup(
             id("little_stage"),
@@ -220,7 +270,7 @@ public class BocchiMod implements ModInitializer {
         // Проверочный запуск при валидации окружения в CI
         if (Boolean.getBoolean("bocchi.validateResources")) {
             VisualValidation.run();
-            if (!PolymerItemGroupUtils.contains(id("little_stage")) || ITEMS.size() != 113) {
+            if (!PolymerItemGroupUtils.contains(id("little_stage")) || ITEMS.size() != 134) {
                 throw new IllegalStateException("BTR World creative tab registration failed: " + ITEMS.size() + " player-facing entries");
             }
             LOGGER.info("Creative tab BTR World registered with {} player-facing entries.", ITEMS.size());
@@ -231,10 +281,37 @@ public class BocchiMod implements ModInitializer {
             LOGGER.info("Resource pack validation passed.");
         }
 
-        LOGGER.info("Little Stage registered: 14 companions, 85 blocks, 113 recipes.");
+        LOGGER.info("Little Stage registered: 14 companions, 85 blocks, 134 recipes.");
 
         // Регистрация операторской команды /bocchi stage
         registerCommands();
+    }
+
+    /**
+     * Внедряет мерч и музыкальный лут в сундуки ванильных структур.
+     */
+    private void registerLootInjection() {
+        net.fabricmc.fabric.api.loot.v3.LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+            if (!source.isBuiltin()) {
+                return;
+            }
+            var id = key.getValue();
+            if (id.getNamespace().equals("minecraft") && (
+                id.getPath().startsWith("chests/simple_dungeon")
+                || id.getPath().startsWith("chests/abandoned_mineshaft")
+                || id.getPath().startsWith("chests/village")
+                || id.getPath().startsWith("chests/desert_pyramid")
+                || id.getPath().startsWith("chests/stronghold")
+            )) {
+                net.minecraft.loot.LootPool.Builder pool = net.minecraft.loot.LootPool.builder()
+                    .rolls(net.minecraft.loot.provider.number.UniformLootNumberProvider.create(0.0F, 1.0F))
+                    .with(net.minecraft.loot.entry.ItemEntry.builder(GUITAR_PICK).weight(8))
+                    .with(net.minecraft.loot.entry.ItemEntry.builder(STARRY_TICKET).weight(6))
+                    .with(net.minecraft.loot.entry.ItemEntry.builder(SODA).weight(7))
+                    .with(net.minecraft.loot.entry.ItemEntry.builder(KIKURI_DRINK).weight(5));
+                tableBuilder.pool(pool);
+            }
+        });
     }
 
     /**
