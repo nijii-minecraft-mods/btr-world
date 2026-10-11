@@ -2,25 +2,11 @@
   "textures": {
     "kikuri_pack": "bocchi:block/model/kikuri_pack",
     "soda": "bocchi:block/model/soda",
-    "starry_ticket": "bocchi:block/model/starry_ticket",
-    "pick": "bocchi:block/model/pick",
     "maid_lace": "bocchi:block/model/maid_lace",
     "white": "bocchi:block/model/white",
     "black": "bocchi:block/model/black",
     "metal": "bocchi:block/model/metal",
-    "cardboard": "bocchi:block/model/cardboard",
-    "wood": "bocchi:block/model/wood",
-    "red": "bocchi:block/model/red",
-    "yellow": "bocchi:block/model/yellow",
-    "blue": "bocchi:block/model/blue",
-    "pink": "bocchi:block/model/pink",
-    "panties_bocchi": "bocchi:block/model/panties_bocchi",
-    "panties_nijika": "bocchi:block/model/panties_nijika",
-    "panties_ryo": "bocchi:block/model/panties_ryo",
-    "panties_kita": "bocchi:block/model/panties_kita",
-    "panties_seika": "bocchi:block/model/panties_seika",
-    "panties_kikuri": "bocchi:block/model/panties_kikuri",
-    "panties_pa_san": "bocchi:block/model/panties_pa_san"
+    "cardboard": "bocchi:block/model/cardboard"
   },
   "elements": [
     {

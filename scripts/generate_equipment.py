@@ -47,17 +47,26 @@ o['display']['head'] = {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale'
 o['display']['gui'] = {'rotation': [15, -45, 0], 'translation': [-7, -3, 0], 'scale': [1.2, 1.2, 1.2]}
 js(AS / 'models/item/bocchi_hairclip.json', o)
 
-# 4. Большой красный бантик Нидзики
+# 4. Большой красный бант Нидзики (крепится на шею)
 e = [
-    element([14.8, 12.0, 6.5], [16.6, 13.8, 8.5], 'red'),
-    element([14.7, 12.8, 4.2], [16.4, 15.2, 6.8], 'red', rotation={'origin': [15.5, 13.0, 6.5], 'axis': 'z', 'angle': 22.5}),
-    element([14.7, 12.8, 8.2], [16.4, 15.2, 10.8], 'red', rotation={'origin': [15.5, 13.0, 8.5], 'axis': 'z', 'angle': -22.5}),
-    element([15.0, 9.2, 5.8], [16.3, 12.2, 7.2], 'red'),
-    element([15.0, 8.4, 7.8], [16.3, 12.0, 9.2], 'red')
+    # Узел по центру шеи
+    element([7.0, -1.0, 3.2], [9.0, 1.0, 4.4], 'red'),
+    # Левое крыло банта
+    element([3.5, -0.6, 3.4], [7.0, 1.8, 4.2], 'red', rotation={'origin': [7.0, 0.0, 3.8], 'axis': 'z', 'angle': 22.5}),
+    # Правое крыло банта
+    element([9.0, -0.6, 3.4], [12.5, 1.8, 4.2], 'red', rotation={'origin': [9.0, 0.0, 3.8], 'axis': 'z', 'angle': -22.5}),
+    # Свисающие ленты на грудь
+    element([6.0, -5.0, 3.2], [7.6, -1.0, 3.8], 'red'),
+    element([8.4, -5.0, 3.2], [10.0, -1.0, 3.8], 'red'),
+    # Лента вокруг шеи
+    element([4.5, -0.8, 3.8], [11.5, 0.4, 4.3], 'red'),
+    element([4.0, -0.8, 4.3], [4.6, 0.4, 11.7], 'red'),
+    element([11.4, -0.8, 4.3], [12.0, 0.4, 11.7], 'red'),
+    element([4.5, -0.8, 11.7], [11.5, 0.4, 12.2], 'red')
 ]
 o = model(e)
 o['display']['head'] = {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale': [1, 1, 1]}
-o['display']['gui'] = {'rotation': [15, -45, 0], 'translation': [-7, -3, 0], 'scale': [1.0, 1.0, 1.0]}
+o['display']['gui'] = {'rotation': [15, 0, 0], 'translation': [0, 2, 0], 'scale': [1.3, 1.3, 1.3]}
 js(AS / 'models/item/nijika_ribbon.json', o)
 
 # 5. Стильная заколка Рё (крестик на чёлке)
@@ -134,7 +143,7 @@ labels = {
     'mango_box_hat': ('Коробка из-под манго', 'Mango Box Hat'),
     'nijika_ahoge': ('Дори-ахоге Нидзики', 'Nijika’s Dorito Ahoge'),
     'bocchi_hairclip': ('Заколка-кубики Хитори', 'Hitori’s Cube Hairclips'),
-    'nijika_ribbon': ('Бантик Нидзики', 'Nijika’s Ribbon'),
+    'nijika_ribbon': ('Шейный бант Нидзики', 'Nijika’s Neck Ribbon'),
     'ryo_hairclip': ('Заколка Рё', 'Ryo’s Hairclip'),
     'kita_hairclip': ('Заколка-звёздочка Киты', 'Kita’s Star Hairpin'),
     'tsuchinoko_hat': ('Шапка «Цутиноко-Боччи»', 'Tsuchinoko Bocchi Hat'),

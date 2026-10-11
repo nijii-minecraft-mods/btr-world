@@ -1,4 +1,4 @@
-"""Generate textures, 3D item models, recipes, loot tables and localizations for costumes, panties and club loot."""
+"""Generate textures, 2D item sprites, 3D models, recipes, loot tables and localizations for costumes, panties and club loot."""
 from pathlib import Path
 from PIL import Image, ImageDraw
 import json
@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1] / 'src/main/resources'
 AS = ROOT / 'assets/bocchi'
 DATA = ROOT / 'data/bocchi'
 
-for d in ['textures/block/model', 'models/item', 'lang']:
+for d in ['textures/block/model', 'textures/item', 'models/item', 'lang']:
     (AS / d).mkdir(parents=True, exist_ok=True)
 for d in ['recipe', 'loot_table/chests']:
     (DATA / d).mkdir(parents=True, exist_ok=True)
@@ -15,7 +15,11 @@ for d in ['recipe', 'loot_table/chests']:
 def js(path, obj):
     path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
-# Helper for element cuboids
+def hex_to_rgba(hex_str, alpha=255):
+    hex_str = hex_str.lstrip('#')
+    r, g, b = tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+    return (r, g, b, alpha)
+
 def element(a, b, tex, north=None, rotation=None):
     faces = {s: {'uv': [0, 0, 16, 16], 'texture': '#' + tex} for s in ['north', 'south', 'east', 'west', 'up', 'down']}
     if north:
@@ -25,9 +29,9 @@ def element(a, b, tex, north=None, rotation=None):
         res['rotation'] = rotation
     return res
 
-# --- 1. Пиксельные текстуры ---
+# --- 1. Текстуры для 3D моделей блоков/предметов ---
 
-# Тетрапак они-напитка Кикури (зелёный бамбук + красные и белые иероглифы)
+# Тетрапак они-напитка Кикури (32x32)
 im = Image.new('RGB', (32, 32), '#387346')
 d = ImageDraw.Draw(im)
 d.rectangle((2, 2, 29, 29), outline='#eedb9d', width=1)
@@ -37,7 +41,7 @@ d.rectangle((5, 15, 26, 26), fill='#f5ebd5')
 d.text((7, 16), 'SICK', fill='#2d5a37')
 im.save(AS / 'textures/block/model/kikuri_pack.png')
 
-# Банка газировки Симокитадзавы
+# Банка газировки Симокитадзавы (16x16)
 im = Image.new('RGB', (16, 16), '#53a5c7')
 d = ImageDraw.Draw(im)
 d.rectangle((0, 0, 15, 2), fill='#b8c5cc')
@@ -45,24 +49,6 @@ d.rectangle((0, 13, 15, 15), fill='#b8c5cc')
 d.line([(3, 5), (12, 10)], fill='#fff5e7', width=1)
 d.point([(5, 4), (10, 6), (7, 9), (11, 11)], fill='#cbf0ff')
 im.save(AS / 'textures/block/model/soda.png')
-
-# Концертный билет STARRY
-im = Image.new('RGB', (32, 16), '#ffd275')
-d = ImageDraw.Draw(im)
-d.rectangle((0, 0, 31, 15), outline='#9a7322', width=1)
-d.line([(22, 0), (22, 15)], fill='#9a7322', width=1)
-for y in range(1, 15, 3):
-    d.point((22, y), fill='#ffd275')
-d.rectangle((4, 3, 18, 12), fill='#342a34')
-d.text((6, 4), 'STARRY', fill='#ffd275')
-im.save(AS / 'textures/block/model/starry_ticket.png')
-
-# Гитарный медиатор
-im = Image.new('RGB', (16, 16), '#ef627a')
-d = ImageDraw.Draw(im)
-d.polygon([(8, 14), (2, 3), (14, 3)], fill='#e84a65', outline='#ffe28a')
-d.polygon([(8, 6), (7, 9), (9, 9)], fill='#ffe28a')
-im.save(AS / 'textures/block/model/pick.png')
 
 # Кружева ободка горничной
 im = Image.new('RGB', (16, 16), '#fbfbfb')
@@ -72,47 +58,232 @@ for x in range(0, 16, 4):
     d.rectangle((x + 1, 7, x + 2, 15), fill='#e3dbe8')
 im.save(AS / 'textures/block/model/maid_lace.png')
 
-# Текстуры трусиков для каждой героини
-panty_colors = {
-    'bocchi': ('#f5a7cc', '#e8f4fa', '#f5db76'), # розовые в полоску с сине-желтыми акцентами
-    'nijika': ('#fce38a', '#ffffff', '#e84a65'), # желто-белые с красным бантиком
-    'ryo': ('#5b7aa6', '#e0ecf8', '#ffffff'),     # сине-голубые минималистичные
-    'kita': ('#e65965', '#ffffff', '#ffd275'),    # кораллово-красные со звездочкой
-    'seika': ('#28262c', '#403c47', '#ffd275'),   # черные кружевные
-    'kikuri': ('#943b7e', '#457d54', '#eedb9d'),  # пурпурно-зеленые
-    'pa_san': ('#383747', '#5d5c70', '#9cb2bd')   # темно-готические с металлическим кольцом
+# --- 2. Пиксельные 2D-спрайты предметов (16x16 RGBA) ---
+
+panty_specs = {
+    'bocchi': {
+        'outline': '#964867',
+        'base': '#f5a4c5',
+        'stripe': '#ffffff',
+        'waist': '#fce4ee',
+        'accent1': '#4fa0db', # blue cube
+        'accent2': '#f7d752', # yellow cube
+        'type': 'cubes'
+    },
+    'nijika': {
+        'outline': '#947227',
+        'base': '#f7d257',
+        'stripe': '#ffffff',
+        'waist': '#fff5cc',
+        'accent1': '#e63946', # red bow
+        'type': 'bow'
+    },
+    'ryo': {
+        'outline': '#253d5e',
+        'base': '#4d71a3',
+        'stripe': '#96b6de',
+        'waist': '#cce0f5',
+        'accent1': '#ffffff', # cross
+        'type': 'cross'
+    },
+    'kita': {
+        'outline': '#8c2533',
+        'base': '#e64c5e',
+        'stripe': '#ffffff',
+        'waist': '#ffe3e6',
+        'accent1': '#ffd147', # star
+        'type': 'star'
+    },
+    'seika': {
+        'outline': '#17151a',
+        'base': '#2a2730',
+        'stripe': '#3e3a47',
+        'waist': '#332f3b',
+        'accent1': '#e3be5b', # gold
+        'type': 'gold'
+    },
+    'kikuri': {
+        'outline': '#4d163a',
+        'base': '#91316f',
+        'stripe': '#3f734d',
+        'waist': '#4e8a5e',
+        'accent1': '#f2dc87', # yellow dot
+        'type': 'punk'
+    },
+    'pa_san': {
+        'outline': '#1c1b24',
+        'base': '#383645',
+        'stripe': '#56536b',
+        'waist': '#4a475c',
+        'accent1': '#c2c9cf', # silver ring
+        'type': 'ring'
+    }
 }
 
-for kind, (c1, c2, c3) in panty_colors.items():
-    im = Image.new('RGB', (16, 16), c1)
-    d = ImageDraw.Draw(im)
-    for y in range(0, 16, 4):
-        d.line([(0, y), (15, y)], fill=c2, width=1)
-    d.rectangle((6, 2, 9, 5), fill=c3)
-    im.save(AS / f'textures/block/model/panties_{kind}.png')
+for name, s in panty_specs.items():
+    im = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    pix = im.load()
+    out = hex_to_rgba(s['outline'])
+    base = hex_to_rgba(s['base'])
+    stripe = hex_to_rgba(s['stripe'])
+    waist = hex_to_rgba(s['waist'])
 
-# Регистрируем текстуры в словаре
-tex = {
+    rows = {
+        4: range(3, 13),
+        5: range(3, 13),
+        6: range(3, 13),
+        7: range(4, 12),
+        8: range(5, 11),
+        9: range(5, 11),
+        10: range(6, 10),
+        11: range(6, 10)
+    }
+    for y, xs in rows.items():
+        for x in xs:
+            if y in (4, 5):
+                pix[x, y] = waist
+            elif y in (6, 8, 10):
+                pix[x, y] = stripe
+            else:
+                pix[x, y] = base
+
+    outlines = [
+        (3, 3), (4, 3), (5, 3), (6, 3), (7, 3), (8, 3), (9, 3), (10, 3), (11, 3), (12, 3),
+        (2, 4), (13, 4), (2, 5), (13, 5),
+        (2, 6), (13, 6),
+        (3, 7), (12, 7),
+        (4, 8), (11, 8),
+        (4, 9), (11, 9),
+        (5, 10), (10, 10),
+        (5, 11), (10, 11),
+        (6, 12), (7, 12), (8, 12), (9, 12)
+    ]
+    for x, y in outlines:
+        pix[x, y] = out
+
+    t = s['type']
+    if t == 'cubes':
+        pix[3, 4] = hex_to_rgba(s['accent1'])
+        pix[4, 4] = hex_to_rgba(s['accent2'])
+    elif t == 'bow':
+        pix[7, 4] = hex_to_rgba(s['accent1'])
+        pix[8, 4] = hex_to_rgba(s['accent1'])
+        pix[6, 3] = hex_to_rgba(s['accent1'])
+        pix[9, 3] = hex_to_rgba(s['accent1'])
+    elif t == 'cross':
+        pix[7, 7] = hex_to_rgba(s['accent1'])
+        pix[8, 7] = hex_to_rgba(s['accent1'])
+        pix[7, 6] = hex_to_rgba(s['accent1'])
+        pix[8, 6] = hex_to_rgba(s['accent1'])
+    elif t == 'star':
+        pix[7, 7] = hex_to_rgba(s['accent1'])
+        pix[8, 7] = hex_to_rgba(s['accent1'])
+        pix[7, 6] = hex_to_rgba('#fff5cc')
+    elif t == 'gold':
+        pix[7, 4] = hex_to_rgba(s['accent1'])
+        pix[8, 4] = hex_to_rgba(s['accent1'])
+    elif t == 'punk':
+        pix[7, 4] = hex_to_rgba(s['accent1'])
+    elif t == 'ring':
+        pix[7, 4] = hex_to_rgba(s['accent1'])
+        pix[8, 4] = hex_to_rgba(s['accent1'])
+        pix[7, 5] = hex_to_rgba(s['accent1'])
+
+    im.save(AS / f'textures/item/{name}_panties.png')
+
+# 2D спрайт гитарного медиатора (16x16)
+im_pick = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+pix = im_pick.load()
+pick_out = hex_to_rgba('#8c1d30')
+pick_base = hex_to_rgba('#e63956')
+pick_star = hex_to_rgba('#ffe28a')
+# Форма треугольника
+for y in range(3, 13):
+    span = (13 - y) // 2 + 1
+    for x in range(8 - span, 8 + span):
+        pix[x, y] = pick_base
+# Контур
+pick_outlines = [
+    (5, 2), (6, 2), (7, 2), (8, 2), (9, 2), (10, 2),
+    (4, 3), (11, 3), (3, 4), (12, 4), (4, 5), (11, 5),
+    (4, 6), (11, 6), (5, 7), (10, 7), (5, 8), (10, 8),
+    (6, 9), (9, 9), (6, 10), (9, 10), (7, 11), (8, 11),
+    (7, 12), (8, 12), (7, 13), (8, 13)
+]
+for x, y in pick_outlines:
+    if 0 <= x < 16 and 0 <= y < 16:
+        pix[x, y] = pick_out
+# Звезда Kessoku
+for x, y in [(7, 5), (8, 5), (6, 6), (7, 6), (8, 6), (9, 6), (7, 7), (8, 7)]:
+    pix[x, y] = pick_star
+im_pick.save(AS / 'textures/item/guitar_pick.png')
+
+# 2D спрайт билета STARRY (16x16)
+im_tick = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+pix = im_tick.load()
+tick_out = hex_to_rgba('#8a671e')
+tick_base = hex_to_rgba('#ffd275')
+tick_star = hex_to_rgba('#ffffff')
+tick_perf = hex_to_rgba('#bfa14b')
+for y in range(4, 12):
+    for x in range(1, 15):
+        if x in (1, 14) or y in (4, 11):
+            pix[x, y] = tick_out
+        elif x == 11:
+            pix[x, y] = tick_perf if y % 2 == 0 else (0, 0, 0, 0) # перфорация
+        else:
+            pix[x, y] = tick_base
+# Звёздочка
+for x, y in [(4, 7), (5, 7), (6, 7), (5, 6), (5, 8)]:
+    pix[x, y] = tick_star
+im_tick.save(AS / 'textures/item/starry_ticket.png')
+
+# --- 3. Модели предметов (JSON) ---
+
+# 2D предметы через minecraft:item/generated
+for name in panty_specs:
+    js(AS / f'models/item/{name}_panties.json', {
+        'parent': 'minecraft:item/generated',
+        'textures': {'layer0': f'bocchi:item/{name}_panties'}
+    })
+
+js(AS / 'models/item/guitar_pick.json', {
+    'parent': 'minecraft:item/generated',
+    'textures': {'layer0': 'bocchi:item/guitar_pick'}
+})
+
+js(AS / 'models/item/starry_ticket.json', {
+    'parent': 'minecraft:item/generated',
+    'textures': {'layer0': 'bocchi:item/starry_ticket'}
+})
+
+# Кожаная одежда через minecraft:item/leather_...
+costume_bases = {
+    'shuka_blouse': 'leather_chestplate',
+    'shuka_skirt': 'leather_leggings',
+    'shuka_shoes': 'leather_boots',
+    'shimokitazawa_vest': 'leather_chestplate',
+    'shimokitazawa_skirt': 'leather_leggings',
+    'starry_shirt': 'leather_chestplate',
+    'maid_dress': 'leather_chestplate',
+    'maid_skirt': 'leather_leggings'
+}
+for item_id, base in costume_bases.items():
+    js(AS / f'models/item/{item_id}.json', {'parent': 'minecraft:item/' + base})
+
+# 3D модели для напитка, пачки, банки и ободка горничной
+tex_3d = {
     'kikuri_pack': 'bocchi:block/model/kikuri_pack',
     'soda': 'bocchi:block/model/soda',
-    'starry_ticket': 'bocchi:block/model/starry_ticket',
-    'pick': 'bocchi:block/model/pick',
     'maid_lace': 'bocchi:block/model/maid_lace',
     'white': 'bocchi:block/model/white',
     'black': 'bocchi:block/model/black',
     'metal': 'bocchi:block/model/metal',
-    'cardboard': 'bocchi:block/model/cardboard',
-    'wood': 'bocchi:block/model/wood',
-    'red': 'bocchi:block/model/red',
-    'yellow': 'bocchi:block/model/yellow',
-    'blue': 'bocchi:block/model/blue',
-    'pink': 'bocchi:block/model/pink'
+    'cardboard': 'bocchi:block/model/cardboard'
 }
-for kind in panty_colors:
-    tex[f'panties_{kind}'] = f'bocchi:block/model/panties_{kind}'
 
 def make_model(elements, display=None):
-    obj = {'textures': tex, 'elements': elements}
+    obj = {'textures': tex_3d, 'elements': elements}
     if display:
         obj['display'] = display
     else:
@@ -123,8 +294,6 @@ def make_model(elements, display=None):
             'firstperson_righthand': {'rotation': [0, 45, 0], 'translation': [0, 1, 0], 'scale': [0.7, 0.7, 0.7]}
         }
     return obj
-
-# --- 2. Модели 3D предметов ---
 
 # Ободок горничной (maid_headband)
 e_headband = [
@@ -162,61 +331,13 @@ e_soda = [
 ]
 js(AS / 'models/item/shimokitazawa_soda.json', make_model(e_soda))
 
-# Медиатор Kessoku Band (guitar_pick)
-e_pick = [
-    element([4.0, 2.0, 7.5], [12.0, 12.0, 8.5], 'pick')
-]
-js(AS / 'models/item/guitar_pick.json', make_model(e_pick))
+# Удаляем устаревшие файлы блочных текстур трусиков и пика
+for old_file in (AS / 'textures/block/model').glob('panties_*.png'):
+    old_file.unlink(missing_ok=True)
+(AS / 'textures/block/model/pick.png').unlink(missing_ok=True)
+(AS / 'textures/block/model/starry_ticket.png').unlink(missing_ok=True)
 
-# Билет на концерт STARRY (starry_ticket)
-e_ticket = [
-    element([1.0, 4.0, 7.8], [15.0, 12.0, 8.2], 'starry_ticket')
-]
-js(AS / 'models/item/starry_ticket.json', make_model(e_ticket))
-
-# Уникальные 3D-модели трусиков для каждой героини
-for kind in panty_colors:
-    e_panty = [
-        element([3.5, 5.0, 6.5], [12.5, 10.0, 9.5], f'panties_{kind}'),
-        element([4.5, 2.0, 7.0], [11.5, 5.0, 9.0], f'panties_{kind}'),
-        element([6.0, 0.5, 7.2], [10.0, 2.0, 8.8], f'panties_{kind}'),
-        element([7.0, 9.0, 6.0], [9.0, 10.5, 7.0], 'white' if kind != 'bocchi' else 'pink')
-    ]
-    # Характерные украшения
-    if kind == 'bocchi':
-        e_panty.append(element([9.2, 8.5, 6.0], [10.8, 10.1, 6.8], 'blue'))
-        e_panty.append(element([9.2, 6.8, 6.0], [10.8, 8.4, 6.8], 'yellow'))
-    elif kind == 'nijika':
-        e_panty.append(element([6.5, 9.5, 5.8], [9.5, 11.0, 6.6], 'red'))
-    elif kind == 'ryo':
-        e_panty.append(element([7.2, 8.8, 6.0], [8.8, 10.4, 6.6], 'white'))
-    elif kind == 'kita':
-        e_panty.append(element([7.0, 8.6, 5.8], [9.0, 10.6, 6.6], 'yellow'))
-    elif kind == 'seika':
-        e_panty.append(element([7.3, 8.8, 5.9], [8.7, 10.2, 6.5], 'yellow'))
-    elif kind == 'pa_san':
-        e_panty.append(element([7.5, 8.8, 6.0], [8.5, 9.8, 6.5], 'metal'))
-    
-    m_panty = make_model(e_panty)
-    m_panty['display']['head'] = {'rotation': [0, 0, 0], 'translation': [0, -2, 0], 'scale': [0.9, 0.9, 0.9]}
-    m_panty['display']['gui'] = {'rotation': [15, -45, 0], 'translation': [0, -1, 0], 'scale': [1.1, 1.1, 1.1]}
-    js(AS / f'models/item/{kind}_panties.json', m_panty)
-
-# Модели одежды на основе кожаной брони
-costume_bases = {
-    'shuka_blouse': 'leather_chestplate',
-    'shuka_skirt': 'leather_leggings',
-    'shuka_shoes': 'leather_boots',
-    'shimokitazawa_vest': 'leather_chestplate',
-    'shimokitazawa_skirt': 'leather_leggings',
-    'starry_shirt': 'leather_chestplate',
-    'maid_dress': 'leather_chestplate',
-    'maid_skirt': 'leather_leggings'
-}
-for item_id, base in costume_bases.items():
-    js(AS / f'models/item/{item_id}.json', {'parent': 'minecraft:item/' + base})
-
-# --- 3. Рецепты крафта ---
+# --- 4. Рецепты крафта ---
 
 recipes = {
     'shuka_blouse': ['leather_chestplate', 'blue_wool', 'white_wool', 'string'],
@@ -249,9 +370,8 @@ for item_id, ing_list in recipes.items():
         'result': {'id': 'bocchi:' + item_id, 'count': 1}
     })
 
-# --- 4. Лут в сундуках статуй и бэкстейджа ---
+# --- 5. Лут в сундуках статуй и бэкстейджа ---
 
-# Сундуки статуй (statue_<kind>.json)
 statue_treats = {
     'bocchi': 'cookie',
     'nijika': 'cake',
@@ -262,7 +382,7 @@ statue_treats = {
     'pa_san': 'dried_kelp'
 }
 
-for kind in panty_colors:
+for kind in panty_specs:
     treat = statue_treats[kind]
     js(DATA / f'loot_table/chests/statue_{kind}.json', {
         'type': 'minecraft:chest',
@@ -293,7 +413,6 @@ for kind in panty_colors:
         ]
     })
 
-# Обновляем сундук бэкстейджа сцен
 js(DATA / 'loot_table/chests/stage_backstage.json', {
     'type': 'minecraft:chest',
     'pools': [
@@ -330,7 +449,7 @@ js(DATA / 'loot_table/chests/stage_backstage.json', {
     ]
 })
 
-# --- 5. Локализации ---
+# --- 6. Локализации ---
 
 item_names = {
     'shuka_blouse': ('Матроска старшей школы Сюка', 'Матроска старэйшай школы Сюка', 'Shuka High Sailor Blouse'),
@@ -453,9 +572,8 @@ for locale, idx in [('ru_ru', 0), ('be_by', 1), ('en_us', 2)]:
         lang_data[msg_key] = msgs[idx]
     path.write_text(json.dumps(lang_data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
-# Обновляем тег креативного контента и приветственное открытие рецептов
 recipes_all = sorted((DATA / 'recipe').glob('*.json'))
 js(DATA / 'tags/item/creative_content.json', {'values': [json.loads(p.read_text(encoding='utf-8'))['result']['id'] for p in recipes_all]})
 js(DATA / 'advancement/recipes/welcome.json', {'criteria': {'join': {'trigger': 'minecraft:tick'}}, 'rewards': {'recipes': ['bocchi:' + p.stem for p in recipes_all]}})
 
-print('Generated costumes, panties and loot assets successfully.')
+print('Generated costumes, panties and loot assets with 2D item sprites successfully.')

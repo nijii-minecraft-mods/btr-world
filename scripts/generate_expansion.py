@@ -24,7 +24,7 @@ be.update({'item.bocchi.'+key:value for key,value in {
     'mango_box_hat':'Скрынка з-пад манга',
     'nijika_ahoge':'Доры-ахоге Нідзікі',
     'bocchi_hairclip':'Заколка-кубікі Хіторы',
-    'nijika_ribbon':'Банцік Нідзікі',
+    'nijika_ribbon':'Шыйны банцік Нідзікі',
     'ryo_hairclip':'Заколка Ро',
     'kita_hairclip':'Заколка-зорачка Кіты',
     'tsuchinoko_hat':'Шапка «Цуцінока-Боччы»',
