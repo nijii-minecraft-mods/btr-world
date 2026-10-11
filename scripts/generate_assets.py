@@ -6,12 +6,12 @@ AS=ROOT/'assets/bocchi'; DATA=ROOT/'data/bocchi'
 for d in ['textures/block','textures/block/model','textures/item','models/block','models/item','blockstates','lang']: (AS/d).mkdir(parents=True,exist_ok=True)
 for d in ['recipe','loot_table/blocks','advancement/recipes']: (DATA/d).mkdir(parents=True,exist_ok=True)
 def js(path,obj): path.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n')
-colors={'bocchi':('#efa1c4','#ffcedf','#b75b8e'),'nijika':('#efc657','#fff0a1','#b78a32'),'ryo':('#526fa4','#a4bfde','#2f426a'),'kita':('#ca5258','#f7a5a2','#843c4b')}
-names={'bocchi':'Хитори','nijika':'Нидзика','ryo':'Рё','kita':'Кита'}
+colors={'bocchi':('#efa1c4','#ffcedf','#b75b8e'),'nijika':('#efc657','#fff0a1','#b78a32'),'ryo':('#526fa4','#a4bfde','#2f426a'),'kita':('#ca5258','#f7a5a2','#843c4b'),'seika':('#f5d57b','#fff3b5','#b89d46'),'kikuri':('#9b3f83','#d173b9','#6b2358'),'pa_san':('#363545','#6b6982','#1d1c26')}
+names={'bocchi':'Хитори','nijika':'Нидзика','ryo':'Рё','kita':'Кита','seika':'Сейка','kikuri':'Кикури','pa_san':'ПА-сан'}
 ru={};en={}
 def lang(key,name,english):ru[key]=name;en[key]=english
 random.seed(2026)
-materials={'skin':'#ffdfc5','outline':'#3f3047','white':'#fff5e7','black':'#34313f','metal':'#9cb2bd','pink':'#f3a0c0','blue':'#74cce8','red':'#d34657','yellow':'#f1d35e','cardboard':'#ba8861','carddark':'#80553c','wood':'#99734b','green':'#6c9852'}
+materials={'skin':'#ffdfc5','outline':'#3f3047','white':'#fff5e7','black':'#34313f','metal':'#9cb2bd','pink':'#f3a0c0','blue':'#74cce8','red':'#d34657','yellow':'#f1d35e','cardboard':'#ba8861','carddark':'#80553c','wood':'#99734b','green':'#6c9852','darkgreen':'#3d6951','purple':'#9b3f83','orange':'#e88938'}
 for k,(base,light,dark) in colors.items(): materials[k]=base;materials[k+'_light']=light;materials[k+'_dark']=dark
 for name,color in materials.items(): Image.new('RGB',(16,16),color).save(AS/f'textures/block/model/{name}.png')
 # Pixel faces belong to the newly built Minecraft models, not extracted anime artwork.
@@ -20,6 +20,16 @@ for kind in colors:
  if kind=='bocchi':
   d.line([(3,5),(6,7),(3,9)],fill=materials['outline'],width=2);d.line([(12,5),(9,7),(12,9)],fill=materials['outline'],width=2)
   d.rectangle((6,11,9,12),fill=materials['outline'])
+ elif kind=='seika':
+  d.rectangle((3,6,4,8),fill='#ba3d3d');d.rectangle((11,6,12,8),fill='#ba3d3d')
+  d.line([(6,11),(9,11)],fill=materials['outline'],width=1)
+ elif kind=='kikuri':
+  d.rectangle((3,6,4,8),fill='#38a58e');d.rectangle((11,6,12,8),fill='#38a58e')
+  d.line([(5,11),(7,12),(9,11),(11,12)],fill=materials['outline'],width=1)
+ elif kind=='pa_san':
+  d.rectangle((3,6,4,8),fill='#428a84');d.rectangle((11,6,12,8),fill='#428a84')
+  d.line([(6,11),(9,11)],fill=materials['outline'],width=1)
+  d.point((7,12),fill=materials['metal'])
  else:
   d.rectangle((3,6,4,8),fill=materials['outline']);d.rectangle((11,6,12,8),fill=materials['outline'])
   d.line([(6,11),(8,12),(10,11)],fill=materials['outline'],width=1)
@@ -68,7 +78,7 @@ for kind in colors:
    top=16
   else:
    e+=[element([5,8,6],[7,11,10],'black'),element([9,8,6],[11,11,10],'black')]
-   e+=[element([4,11,5],[12,17,11],'pink' if kind=='bocchi' else 'white')]
+   e+=[element([4,11,5],[12,17,11],'pink' if kind=='bocchi' else ('darkgreen' if kind=='kikuri' else ('black' if kind in ('seika','pa_san') else 'white')))]
    e+=[element([2,11,6],[4,16,10],'skin'),element([12,11,6],[14,16,10],'skin')]
    e+=[element([3,17,3],[13,26,13],'skin',kind+'_face'),element([2.5,24,2.5],[13.5,27,13.5],hair),element([2,17,3],[4,26,14],hair),element([12,17,3],[14,26,14],hair),element([3,17,12.5],[13,26,14],hair)]
    e+=[element([4,23.5,2.6],[6,25,3],hair),element([7,24,2.6],[10,25,3],hair)]
@@ -78,6 +88,12 @@ for kind in colors:
    e+=[element([7,top,7],[10,top+2,8],'yellow',rotation={'origin':[8,top,8],'axis':'z','angle':22.5}),element([14,10,8],[16,top-1,12],hair),element([12,top-3,7],[15,top-1,10],'red')]
   if kind=='ryo':e+=[element([2,top-5,2.5],[4,top-4,3],'white')]
   if kind=='kita':e+=[element([2,10,10],[4,top-3,14],hair),element([12,10,10],[14,top-3,14],hair)]
+  if kind=='seika':
+   e+=[element([7,top,7],[9,top+2.5,8],hair,rotation={'origin':[8,top,8],'axis':'z','angle':-22.5}),element([1.5,12,7],[3.5,top-2,10],hair),element([2,top-4,2.5],[4,top-2,3],'black')]
+  if kind=='kikuri':
+   e+=[element([1,9,8],[3.5,top-3,11],hair),element([12.5,9,8],[15,top-3,11],hair),element([12,top-2,7],[15,top,9],'purple')]
+  if kind=='pa_san':
+   e+=[element([1.5,8,7],[3.5,top-2,12],hair),element([12.5,8,7],[14.5,top-2,12],hair),element([3,8,12],[13,top-2,14],hair)]
   ident=kind+'_'+form
   all_mob_models[ident]=model(e)
   js(AS/f'models/item/{ident}.json',model(e))
@@ -99,7 +115,7 @@ for kind in colors:
   lang('item.bocchi.'+ident+'_summoner','Позвать: '+names[kind]+' · '+('тсум' if form=='plush' else 'чиби'),'Summon '+kind.title()+' '+form)
   lang('entity.bocchi.'+ident,names[kind]+' · '+('тсум' if form=='plush' else 'чиби'),kind.title()+' '+form)
   # Survival summoning recipe, intentionally distinct between the two forms.
-  js(DATA/f'recipe/{ident}_summoner.json',{'type':'minecraft:crafting_shaped','pattern':[' W ','DCD',' T '],'key':{'W':{'item':'minecraft:white_wool' if form=='plush' else 'minecraft:oak_planks'},'D':{'item':'minecraft:'+{'bocchi':'pink','nijika':'yellow','ryo':'blue','kita':'red'}[kind]+'_dye'},'C':{'item':'minecraft:cookie'},'T':{'item':'minecraft:amethyst_shard'}},'result':{'id':'bocchi:'+ident+'_summoner','count':1}})
+  js(DATA/f'recipe/{ident}_summoner.json',{'type':'minecraft:crafting_shaped','pattern':[' W ','DCD',' T '],'key':{'W':{'item':'minecraft:white_wool' if form=='plush' else 'minecraft:oak_planks'},'D':{'item':'minecraft:'+{'bocchi':'pink','nijika':'yellow','ryo':'blue','kita':'red','seika':'orange','kikuri':'purple','pa_san':'black'}[kind]+'_dye'},'C':{'item':'minecraft:cookie'},'T':{'item':'minecraft:amethyst_shard'}},'result':{'id':'bocchi:'+ident+'_summoner','count':1}})
  # Figurines use the exact chibi mesh scaled onto a base in block coordinates.
  elems=copy.deepcopy(all_mob_models[kind+'_chibi']['elements'])
  for el in elems:
@@ -129,7 +145,7 @@ for kind,cs in colors.items():
    js(AS/f'models/item/{ident}.json',{'parent':f'bocchi:block/{ident}'})
    js(AS/f'blockstates/{ident}.json',{'variants':{'':{'model':f'bocchi:block/{ident}'}}})
    lang('block.bocchi.'+ident,names[kind]+': '+{'base':'основной','light':'светлый','dark':'тёмный'}[shade]+' '+{'matte':'матовый блок','tile':'кафель','lamp':'светильник'}[finish],kind.title()+' '+shade+' '+finish)
-   dye={'bocchi':'pink','nijika':'yellow','ryo':'blue','kita':'red'}[kind]
+   dye={'bocchi':'pink','nijika':'yellow','ryo':'blue','kita':'red','seika':'orange','kikuri':'purple','pa_san':'black'}[kind]
    ingredients=[{'item':'minecraft:white_concrete'},{'item':'minecraft:'+dye+'_dye'}]
    if shade!='base':ingredients.append({'item':'minecraft:'+('white' if shade=='light' else 'black')+'_dye'})
    if finish=='tile':ingredients.append({'item':'minecraft:quartz'})
@@ -259,7 +275,7 @@ js(AS/'models/item/guitar.json',model(guitar));lang('item.bocchi.guitar','Гит
 js(DATA/'recipe/guitar.json',{'type':'minecraft:crafting_shaped','pattern':[' S ',' P ','IPI'],'key':{'S':{'item':'minecraft:string'},'P':{'item':'minecraft:oak_planks'},'I':{'item':'minecraft:iron_ingot'}},'result':{'id':'bocchi:guitar','count':1}})
 for kind in colors:
  ident=kind+'_figurine'
- js(DATA/f'recipe/{ident}.json',{'type':'minecraft:crafting_shaped','pattern':[' D ',' C ',' S '],'key':{'D':{'item':'minecraft:'+{'bocchi':'pink','nijika':'yellow','ryo':'blue','kita':'red'}[kind]+'_dye'},'C':{'item':'minecraft:clay_ball'},'S':{'item':'minecraft:smooth_stone'}},'result':{'id':'bocchi:'+ident,'count':1}})
+ js(DATA/f'recipe/{ident}.json',{'type':'minecraft:crafting_shaped','pattern':[' D ',' C ',' S '],'key':{'D':{'item':'minecraft:'+{'bocchi':'pink','nijika':'yellow','ryo':'blue','kita':'red','seika':'orange','kikuri':'purple','pa_san':'black'}[kind]+'_dye'},'C':{'item':'minecraft:clay_ball'},'S':{'item':'minecraft:smooth_stone'}},'result':{'id':'bocchi:'+ident,'count':1}})
 # Every placed block drops itself, including props and figurines.
 for path in (AS/'blockstates').glob('*.json'):
  ident=path.stem

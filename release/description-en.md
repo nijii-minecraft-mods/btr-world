@@ -10,15 +10,15 @@ Bocchi, Nijika, Ryo and Kita come in both tsum-style plush and chibi forms: **ei
 - Choose normal following, close following or wandering around the owner.
 - Breed companions of different heroines and forms. The child inherits a heroine identity, not a blend of visual traits.
 - Feed babies to shorten the remaining growth time.
-- Bocchi flees danger and hides; Ryo eats grass and trades figurines; Kita sparkles and provides night vision; Nijika offers nearby haste and helps calm Bocchi.
+- Bocchi flees danger and hides; Ryo eats grass and trades figurines; Kita sparkles and provides night vision; Nijika offers nearby haste and helps calm Bocchi; Seika protects with resistance; Kikuri grants strength and drinks honey; PA-san grants night vision and slows hostile mobs.
 
 ## Rehearsal room
 
-There are **55 blocks and 72 crafting recipes**, including 36 colour-palette blocks, figurines, drums, microphones, a guitar stand, amplifiers, a cardboard box you can sit in, plush toys, posters, a neon star and fairy lights. Costumes and accessories are decorative.
+There are **85 blocks and 113 crafting recipes**, including 63 colour-palette blocks, figurines, drums, microphones, a guitar stand, amplifiers, a cardboard box you can sit in, plush toys, posters, a neon star and fairy lights. Costumes and accessories are decorative.
 
-Adult tame companions can approach their matching instrument and perform for **90–150 seconds**, with note particles and original note-block phrases. Nijika plays percussion, Kita flute tones, Bocchi guitar and Ryo bass. No anime soundtrack recordings, lyrics or song transcriptions are included. Models currently have no animated hands.
+Adult tame companions can approach their matching instrument and perform for **90–150 seconds**, with note particles and original note-block phrases. Nijika plays percussion, Kita flute tones, Bocchi guitar, Ryo and Kikuri bass, Seika livehouse rhythm, and PA-san synth beats. No anime soundtrack recordings, lyrics or song transcriptions are included. Models currently have no animated hands.
 
-Four chibi statue structures can generate in the Overworld. Ten advancements have Russian, Belarusian and English translations.
+Seven chibi statue structures can generate in the Overworld. Ten advancements have Russian, Belarusian and English translations.
 
 ## Installation
 
@@ -30,7 +30,7 @@ Install the mod and dependencies on the server and configure Polymer's server re
 
 | Action | Control |
 |---|---|
-| Tame / heal / accelerate growth | Favourite food: Bocchi cookies, Nijika cake item, Ryo wheat, Kita glow berries |
+| Tame / heal / accelerate growth | Favourite food: Bocchi cookies, Nijika cake item, Ryo wheat, Kita glow berries, Seika sweet berries, Kikuri honey bottle, PA-san dried kelp |
 | Wait / resume | Empty-hand right-click near the base of your companion |
 | Movement mode | Sneak + right-click with a stick |
 | Music on/off | Sneak + empty-hand right-click |

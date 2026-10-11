@@ -20,7 +20,20 @@ entries=[
 ru=json.loads((A/'lang/ru_ru.json').read_text());en=json.loads((A/'lang/en_us.json').read_text())
 # Existing item names fall back to Russian; every new achievement is explicitly translated.
 be=dict(ru)
-be.update({'item.bocchi.'+key:value for key,value in {'mango_box_hat':'Скрынка з-пад манга','nijika_ahoge':'Доры-ахоге Нідзікі','stop_sign':'Дарожны знак STOP','pink_hood':'Ружовы спартыўны капюшон','pink_jacket':'Ружовая спартыўная куртка','pink_pants':'Ружовыя спартыўныя штаны','pink_shoes':'Ружовыя красоўкі'}.items()})
+be.update({'item.bocchi.'+key:value for key,value in {
+    'mango_box_hat':'Скрынка з-пад манга',
+    'nijika_ahoge':'Доры-ахоге Нідзікі',
+    'bocchi_hairclip':'Заколка-кубікі Хіторы',
+    'nijika_ribbon':'Банцік Нідзікі',
+    'ryo_hairclip':'Заколка Ро',
+    'kita_hairclip':'Заколка-зорачка Кіты',
+    'tsuchinoko_hat':'Шапка «Цуцінока-Боччы»',
+    'stop_sign':'Дарожны знак STOP',
+    'pink_hood':'Ружовы спартыўны капюшон',
+    'pink_jacket':'Ружовая спартыўная куртка',
+    'pink_pants':'Ружовыя спартыўныя штаны',
+    'pink_shoes':'Ружовыя красоўкі'
+}.items()})
 for id,icon,words in entries:
  for lang,offset in [(ru,0),(be,2),(en,4)]:
   lang['advancements.bocchi.'+id+'.title']=words[offset];lang['advancements.bocchi.'+id+'.description']=words[offset+1]
@@ -47,7 +60,7 @@ def payload(t,v):
   sub,items=v;return bytes([sub])+struct.pack('>i',len(items))+b''.join(payload(sub,x) for x in items)
  if t==10:return b''.join(bytes([typ])+string(key)+payload(typ,value) for key,(typ,value) in v.items())+b'\0'
  raise ValueError(t)
-for kind in ['bocchi','nijika','ryo','kita']:
+for kind in ['bocchi','nijika','ryo','kita','seika','kikuri','pa_san']:
  blocks={};hair=f'bocchi:{kind}_base_matte';skin='minecraft:white_terracotta';black='minecraft:black_concrete';white='minecraft:white_concrete'
  def fill(x0,y0,z0,x1,y1,z1,mat):
   for x in range(x0,x1+1):
@@ -57,13 +70,17 @@ for kind in ['bocchi','nijika','ryo','kita']:
  fill(0,0,0,10,0,10,'minecraft:stone_bricks');fill(1,1,1,9,1,9,'minecraft:smooth_stone')
  fill(3,2,3,4,2,6,black);fill(6,2,3,7,2,6,black)
  fill(3,3,4,4,4,6,hair if kind=='bocchi' else skin);fill(6,3,4,7,4,6,hair if kind=='bocchi' else skin)
- fill(3,5,3,7,7,7,hair if kind=='bocchi' else white)
- fill(4,8,4,6,8,6,hair if kind=='bocchi' else white)
- if kind!='bocchi':
-  fill(3,5,3,7,5,7,black);fill(5,7,2,5,8,2,hair)
- else:
+ fill(3,5,3,7,7,7,hair if kind=='bocchi' else ('minecraft:green_concrete' if kind=='kikuri' else (black if kind in ('seika','pa_san') else white)))
+ fill(4,8,4,6,8,6,hair if kind=='bocchi' else ('minecraft:green_concrete' if kind=='kikuri' else (black if kind in ('seika','pa_san') else white)))
+ if kind=='bocchi':
   fill(5,5,2,5,7,2,white);fill(3,6,2,4,6,2,'bocchi:bocchi_light_matte');fill(6,6,2,7,6,2,'bocchi:bocchi_light_matte')
- fill(2,7,4,2,8,6,hair if kind=='bocchi' else white);fill(8,7,4,8,8,6,hair if kind=='bocchi' else white)
+ elif kind in ('seika','pa_san'):
+  fill(3,5,3,7,5,7,black);fill(5,7,2,5,8,2,white)
+ elif kind=='kikuri':
+  fill(3,5,3,7,5,7,'minecraft:green_concrete');fill(5,7,2,5,8,2,'minecraft:green_concrete')
+ else:
+  fill(3,5,3,7,5,7,black);fill(5,7,2,5,8,2,hair)
+ fill(2,7,4,2,8,6,hair if kind=='bocchi' else ('minecraft:green_concrete' if kind=='kikuri' else (black if kind in ('seika','pa_san') else white)));fill(8,7,4,8,8,6,hair if kind=='bocchi' else ('minecraft:green_concrete' if kind=='kikuri' else (black if kind in ('seika','pa_san') else white)))
  fill(2,5,4,2,6,5,skin);fill(8,5,4,8,6,5,skin)
  fill(2,9,2,8,13,7,skin)
  # Hair cap and stepped silhouette instead of a tall rectangular curtain.
@@ -86,11 +103,21 @@ for kind in ['bocchi','nijika','ryo','kita']:
  if kind=='kita':
   fill(1,7,6,2,9,7,hair);fill(8,7,6,9,9,7,hair)
   fill(2,6,7,3,7,8,hair);fill(7,6,7,8,7,8,hair)
+ if kind=='seika':
+  fill(5,16,5,6,16,5,hair)
+  fill(1,7,5,2,12,7,hair)
+  fill(1,11,2,2,11,2,black)
+ if kind=='kikuri':
+  fill(1,6,5,2,11,7,hair);fill(8,6,5,9,11,7,hair)
+  fill(8,12,4,9,13,5,'minecraft:purple_concrete')
+ if kind=='pa_san':
+  fill(1,6,4,2,10,7,hair);fill(8,6,4,9,10,7,hair)
+  fill(2,6,7,8,10,8,hair)
  for x,z in [(1,1),(9,1),(1,9),(9,9)]:blocks[x,2,z]=f'bocchi:{kind}_base_lamp'
  palette=sorted(set(blocks.values()));states={name:i for i,name in enumerate(palette)}
  nbt={'DataVersion':(3,3955),'size':(9,(3,[11,18,11])),'palette':(9,(10,[{'Name':(8,name)} for name in palette])),'blocks':(9,(10,[{'pos':(9,(3,list(pos))),'state':(3,states[mat])} for pos,mat in sorted(blocks.items())])),'entities':(9,(10,[]))}
  path=D/f'structure/statues/{kind}.nbt';path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(gzip.compress(b'\x0a\0\0'+payload(10,nbt),mtime=0))
-js(D/'worldgen/template_pool/statues.json',{'name':'bocchi:statues','fallback':'minecraft:empty','elements':[{'weight':1,'element':{'element_type':'minecraft:single_pool_element','location':'bocchi:statues/'+kind,'processors':'minecraft:empty','projection':'rigid'}} for kind in ['bocchi','nijika','ryo','kita']]})
+js(D/'worldgen/template_pool/statues.json',{'name':'bocchi:statues','fallback':'minecraft:empty','elements':[{'weight':1,'element':{'element_type':'minecraft:single_pool_element','location':'bocchi:statues/'+kind,'processors':'minecraft:empty','projection':'rigid'}} for kind in ['bocchi','nijika','ryo','kita','seika','kikuri','pa_san']]})
 js(D/'worldgen/structure/heroine_statue.json',{'type':'minecraft:jigsaw','biomes':'#bocchi:has_statue','step':'surface_structures','spawn_overrides':{},'terrain_adaptation':'beard_thin','start_pool':'bocchi:statues','size':0,'start_height':{'absolute':0},'project_start_to_heightmap':'WORLD_SURFACE_WG','max_distance_from_center':32,'use_expansion_hack':False})
 js(D/'worldgen/structure_set/heroine_statues.json',{'structures':[{'structure':'bocchi:heroine_statue','weight':1}],'placement':{'type':'minecraft:random_spread','spacing':48,'separation':16,'salt':2374018}})
 js(D/'tags/worldgen/biome/has_statue.json',{'values':['minecraft:plains','minecraft:sunflower_plains','minecraft:meadow','minecraft:birch_forest']})

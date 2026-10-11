@@ -3,14 +3,14 @@ from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont
 import json, math
 R=Path(__file__).resolve().parents[1]; A=R/'src/main/resources/assets/bocchi'
-W,H=1440,890
+W,H=2460,890
 im=Image.new('RGB',(W,H),'#f7f3ed'); d=ImageDraw.Draw(im)
 font='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 f=lambda size:ImageFont.truetype(font,size)
 d.text((40,26),'BTR WORLD · ОДИНОКИЙ РОКЕР',font=f(30),fill='#373145')
 d.text((40,70),'Модели прототипа • ортографический рендер JSON • Minecraft 1.21.1',font=f(17),fill='#766e80')
-ns={'bocchi':'Хитори','nijika':'Нидзика','ryo':'Рё','kita':'Кита'}
-cs={'bocchi':'#efa1c4','nijika':'#efc657','ryo':'#526fa4','kita':'#ca5258'}
+ns={'bocchi':'Хитори','nijika':'Нидзика','ryo':'Рё','kita':'Кита','seika':'Сейка','kikuri':'Кикури','pa_san':'ПА-сан'}
+cs={'bocchi':'#efa1c4','nijika':'#efc657','ryo':'#526fa4','kita':'#ca5258','seika':'#f5d57b','kikuri':'#9b3f83','pa_san':'#363545'}
 faces={'north':[(0,1,0),(1,1,0),(1,0,0),(0,0,0)],'east':[(1,1,0),(1,1,1),(1,0,1),(1,0,0)],'up':[(0,1,1),(1,1,1),(1,1,0),(0,1,0)]}
 texcache={}
 def drawmodel(model,cx,cy,scale):
@@ -43,15 +43,15 @@ def drawmodel(model,cx,cy,scale):
   d.line(p+[p[0]],fill='#574b58',width=1)
 for row,form in enumerate(['plush','chibi']):
  for col,kind in enumerate(ns):
-  x=40+col*350;y=125+row*325
-  d.rounded_rectangle((x,y,x+325,y+300),radius=16,fill='white',outline='#e3dce2',width=2)
+  x=40+col*340;y=125+row*325
+  d.rounded_rectangle((x,y,x+320,y+300),radius=16,fill='white',outline='#e3dce2',width=2)
   d.rounded_rectangle((x+16,y+16,x+32,y+32),radius=6,fill=cs[kind])
-  d.text((x+44,y+12),ns[kind]+' · '+('тсум' if form=='plush' else 'чиби'),font=f(19),fill='#373145')
+  d.text((x+44,y+12),ns[kind]+' · '+('тсум' if form=='plush' else 'чиби'),font=f(18),fill='#373145')
   d.ellipse((x+80,y+245,x+245,y+267),fill='#eee9ee')
   model=json.loads((A/f'models/item/{kind}_{form}.json').read_text())
   drawmodel(model,x+65,y+280,7.3 if form=='plush' else 6.0)
-  ability={'bocchi':'Прячется при опасности','nijika':'Поддерживает барабанным ритмом','ryo':'Ест траву • торгует фигурками','kita':'Сияет • дарит ночное зрение'}[kind]
-  d.text((x+14,y+274),ability,font=f(13),fill='#766e80')
-d.text((40,808),'Приручение: печенье / торт / пшеница / светящиеся ягоды',font=f(18),fill='#373145')
+  ability={'bocchi':'Прячется при опасности','nijika':'Барабанный ритм • спешка','ryo':'Ест траву • обмен фигурок','kita':'Сияет • ночное зрение','seika':'Защищает • стойкость','kikuri':'Рок-кураж • сила и мёд','pa_san':'Аура звука • замедляет врагов'}[kind]
+  d.text((x+14,y+274),ability,font=f(12),fill='#766e80')
+d.text((40,808),'Приручение: печенье / торт / пшеница / светящиеся ягоды / сладкие ягоды / баночка мёда / сушёная ламинария',font=f(18),fill='#373145')
 d.text((40,846),'Пустая рука: следовать ↔ ждать. Это превью геометрии, не скриншот из игры.',font=f(15),fill='#766e80')
 out=R.parent/'btr-world-preview.png';im.save(out);print(out)

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "PPP",
+    " Y "
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:pink_wool"
+    },
+    "B": {
+      "item": "minecraft:blue_dye"
+    },
+    "Y": {
+      "item": "minecraft:yellow_dye"
+    }
+  },
+  "result": {
+    "id": "bocchi:tsuchinoko_hat",
+    "count": 1
+  }
+}

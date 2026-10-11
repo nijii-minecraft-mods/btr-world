@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " L ",
+    " Y ",
+    " S "
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:blue_dye"
+    },
+    "Y": {
+      "item": "minecraft:yellow_dye"
+    },
+    "S": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "result": {
+    "id": "bocchi:bocchi_hairclip",
+    "count": 1
+  }
+}

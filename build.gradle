@@ -1,38 +1,73 @@
-plugins { id 'fabric-loom' version '1.7.4'; id 'maven-publish' }
+plugins {
+    id 'fabric-loom' version '1.7.4'
+    id 'maven-publish'
+}
+
 version = providers.gradleProperty('mod_version').get()
 group = 'dev.aliska'
-base { archivesName = 'btr-world' }
-repositories { maven { url = 'https://maven.nucleoid.xyz/' }; maven { url = 'https://maven.blamejared.com/' } }
-dependencies {
- if (project.hasProperty('jeiLocalJar')) { modCompileOnly files(project.property('jeiLocalJar')) }
- else { modCompileOnly('mezz.jei:jei-1.21.1-fabric:19.21.0.247') { transitive = false } }
- minecraft 'com.mojang:minecraft:1.21.1'
- mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'
- modImplementation 'net.fabricmc:fabric-loader:0.16.10'
- modImplementation 'net.fabricmc.fabric-api:fabric-api:0.102.1+1.21.1'
- modImplementation 'eu.pb4:polymer-core:0.9.18+1.21.1'
- modImplementation 'eu.pb4:polymer-blocks:0.9.18+1.21.1'
- modImplementation 'eu.pb4:polymer-resource-pack:0.9.18+1.21.1'
+base {
+    archivesName = 'btr-world'
 }
-java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
-tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }
-processResources { inputs.property 'version', project.version; filesMatching('fabric.mod.json') { expand 'version': project.version } }
 
+repositories {
+    maven { url = 'https://maven.nucleoid.xyz/' }
+    maven { url = 'https://maven.blamejared.com/' }
+}
+
+dependencies {
+    // Опциональная компиляция с JEI для клиентской интеграции рецептов
+    if (project.hasProperty('jeiLocalJar')) {
+        modCompileOnly files(project.property('jeiLocalJar'))
+    } else {
+        modCompileOnly('mezz.jei:jei-1.21.1-fabric:19.21.0.247') { transitive = false }
+    }
+
+    minecraft 'com.mojang:minecraft:1.21.1'
+    mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'
+
+    modImplementation 'net.fabricmc:fabric-loader:0.16.10'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.102.1+1.21.1'
+
+    // Polymer для серверных блоков, предметов и ресурс-пака
+    modImplementation 'eu.pb4:polymer-core:0.9.18+1.21.1'
+    modImplementation 'eu.pb4:polymer-blocks:0.9.18+1.21.1'
+    modImplementation 'eu.pb4:polymer-resource-pack:0.9.18+1.21.1'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}
+
+// Задачи проверки генетики и мелодий
 tasks.register('geneticsCheck', JavaExec) {
- dependsOn testClasses
- classpath = sourceSets.test.runtimeClasspath
- mainClass = 'dev.aliska.bocchi.GeneticsCheck'
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'dev.aliska.bocchi.GeneticsCheck'
 }
 check.dependsOn tasks.named('geneticsCheck')
 
 tasks.register('musicCheck', JavaExec) {
- dependsOn testClasses
- classpath = sourceSets.test.runtimeClasspath
- mainClass = 'dev.aliska.bocchi.MusicCheck'
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'dev.aliska.bocchi.MusicCheck'
 }
 check.dependsOn tasks.named('musicCheck')
 
+// Воспроизводимая сборка архивов
 tasks.withType(AbstractArchiveTask).configureEach {
- preserveFileTimestamps = false
- reproducibleFileOrder = true
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }
