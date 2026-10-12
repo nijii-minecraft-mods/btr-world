@@ -27,8 +27,9 @@ import net.minecraft.world.World;
 
 /**
  * Уникальные трусики для каждой героини BTR World.
- * Можно надевать в слот ног (как бельё) или на голову (как маску при Shift + ПКМ).
- * При надевании дают уникальный бафф героини, проигрывают звук и частицы.
+ * Надеваются на голову (как маска при ПКМ или в слот шлема в инвентаре),
+ * либо в слот ног при Shift + ПКМ.
+ * Дают уникальный бафф героини, проигрывают звук и частицы сердечек.
  */
 public final class PantiesItem extends Item implements PolymerItem, Equipment {
     private final CharacterKind kind;
@@ -43,7 +44,7 @@ public final class PantiesItem extends Item implements PolymerItem, Equipment {
         this.kind = kind;
         this.color = color;
         this.model = PolymerResourcePackUtils.requestModel(
-            Items.LEATHER_LEGGINGS,
+            Items.CARVED_PUMPKIN,
             BocchiMod.id("item/" + kind.id + "_panties")
         ).value();
     }
@@ -58,15 +59,12 @@ public final class PantiesItem extends Item implements PolymerItem, Equipment {
 
     @Override
     public EquipmentSlot getSlotType() {
-        return EquipmentSlot.LEGS;
+        return EquipmentSlot.HEAD;
     }
 
     @Override
     public Item getPolymerItem(ItemStack stack, ServerPlayerEntity player) {
-        if (player != null && player.getEquippedStack(EquipmentSlot.HEAD) == stack) {
-            return Items.LEATHER_HELMET;
-        }
-        return Items.LEATHER_LEGGINGS;
+        return Items.CARVED_PUMPKIN;
     }
 
     @Override
@@ -77,22 +75,21 @@ public final class PantiesItem extends Item implements PolymerItem, Equipment {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        EquipmentSlot targetSlot = player.isSneaking() ? EquipmentSlot.HEAD : EquipmentSlot.LEGS;
-        ItemStack currentlyEquipped = player.getEquippedStack(targetSlot);
 
-        if (currentlyEquipped.isEmpty()) {
-            player.equipStack(targetSlot, stack.copy());
+        // Shift + ПКМ: надеть как нижнее бельё в слот ног
+        if (player.isSneaking()) {
+            ItemStack currentLegs = player.getEquippedStack(EquipmentSlot.LEGS);
+            player.equipStack(EquipmentSlot.LEGS, stack.copyWithCount(1));
             stack.decrement(1);
-
+            if (!currentLegs.isEmpty()) {
+                if (!player.giveItemStack(currentLegs)) {
+                    player.dropItem(currentLegs, false);
+                }
+            }
             if (!world.isClient()) {
                 applyHeroineBuff(player);
-                if (targetSlot == EquipmentSlot.HEAD) {
-                    world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 1.0F, 1.5F);
-                    player.sendMessage(Text.translatable("message.bocchi.panties.head", kind.name), true);
-                } else {
-                    world.playSound(null, player.getBlockPos(), SoundEvents.ITEM_ARMOR_EQUIP_LEATHER.value(), SoundCategory.PLAYERS, 1.0F, 1.0F);
-                    player.sendMessage(Text.translatable("message.bocchi.panties.wear", kind.name), true);
-                }
+                world.playSound(null, player.getBlockPos(), SoundEvents.ITEM_ARMOR_EQUIP_LEATHER.value(), SoundCategory.PLAYERS, 1.0F, 1.0F);
+                player.sendMessage(Text.translatable("message.bocchi.panties.wear", kind.name), true);
                 if (world instanceof ServerWorld serverWorld) {
                     serverWorld.spawnParticles(ParticleTypes.HEART, player.getX(), player.getY() + 1.0, player.getZ(), 5, 0.3, 0.3, 0.3, 0.1);
                 }
@@ -100,7 +97,17 @@ public final class PantiesItem extends Item implements PolymerItem, Equipment {
             return TypedActionResult.success(stack, world.isClient());
         }
 
-        return equipAndSwap(this, world, player, hand);
+        // Обычный ПКМ: надеть на голову (как маску/головной убор)
+        TypedActionResult<ItemStack> result = equipAndSwap(this, world, player, hand);
+        if (!world.isClient() && result.getResult().isAccepted()) {
+            applyHeroineBuff(player);
+            world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 1.0F, 1.5F);
+            player.sendMessage(Text.translatable("message.bocchi.panties.head", kind.name), true);
+            if (world instanceof ServerWorld serverWorld) {
+                serverWorld.spawnParticles(ParticleTypes.HEART, player.getX(), player.getY() + 1.0, player.getZ(), 5, 0.3, 0.3, 0.3, 0.1);
+            }
+        }
+        return result;
     }
 
     public void applyHeroineBuff(PlayerEntity player) {
