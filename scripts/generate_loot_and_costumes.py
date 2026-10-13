@@ -237,38 +237,11 @@ im_tick.save(AS / 'textures/item/starry_ticket.png')
 
 # --- 3. Модели предметов (JSON) ---
 
-# Модели трусиков: 2D спрайт в инвентаре + идеальная посадка на лицо при надевании на голову!
+# 2D предметы через minecraft:item/generated
 for name in panty_specs:
     js(AS / f'models/item/{name}_panties.json', {
         'parent': 'minecraft:item/generated',
-        'textures': {'layer0': f'bocchi:item/{name}_panties'},
-        'display': {
-            'head': {
-                'rotation': [0, 0, 0],
-                'translation': [0, 3, -4.5],
-                'scale': [1.25, 1.25, 1.25]
-            },
-            'gui': {
-                'rotation': [0, 0, 0],
-                'translation': [0, 0, 0],
-                'scale': [1.0, 1.0, 1.0]
-            },
-            'ground': {
-                'rotation': [0, 0, 0],
-                'translation': [0, 2, 0],
-                'scale': [0.5, 0.5, 0.5]
-            },
-            'thirdperson_righthand': {
-                'rotation': [0, 0, 0],
-                'translation': [0, 3, 1],
-                'scale': [0.55, 0.55, 0.55]
-            },
-            'firstperson_righthand': {
-                'rotation': [0, -90, 25],
-                'translation': [1.13, 3.2, 1.13],
-                'scale': [0.68, 0.68, 0.68]
-            }
-        }
+        'textures': {'layer0': f'bocchi:item/{name}_panties'}
     })
 
 js(AS / 'models/item/guitar_pick.json', {
