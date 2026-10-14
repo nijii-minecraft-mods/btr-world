@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1] / 'src/main/resources'
 AS = ROOT / 'assets/bocchi'
 DATA = ROOT / 'data/bocchi'
 
-for d in ['textures/block/model', 'textures/item', 'models/item', 'lang']:
+for d in ['textures/block/model', 'textures/item', 'textures/models/armor', 'models/item', 'lang']:
     (AS / d).mkdir(parents=True, exist_ok=True)
 for d in ['recipe', 'loot_table/chests']:
     (DATA / d).mkdir(parents=True, exist_ok=True)
@@ -191,6 +191,57 @@ for key, s in panty_specs.items():
         pix[7, 5] = rib
 
     im.save(AS / f'textures/item/{key}_panties.png')
+
+    # Кастомные текстуры брони Polymer/FancyPants (64x32)
+    # LAYER 2: Надевание на попу / ноги (бельё на бёдрах и ягодицах, полностью голые ножки без длинных штанин)
+    im_armor2 = Image.new('RGBA', (64, 32), (0, 0, 0, 0))
+    # Бёдра / таз / ягодицы на торсе (X=16..40, Y=26..31)
+    for y in range(26, 32):
+        col = lace if y == 26 else (stripe if y in (28, 30) else base)
+        for x in range(16, 40):
+            im_armor2.putpixel((x, y), col)
+    # Ластовица / нижний шов (X=28..36, Y=16..20)
+    for y in range(16, 20):
+        for x in range(28, 36):
+            im_armor2.putpixel((x, y), base)
+    # Верхние каёмки вырезов на бёдрах (только верхние 2 пикселя ног, остальное прозрачно — голые ноги!)
+    for y in range(20, 22):
+        for x in range(0, 16):
+            im_armor2.putpixel((x, y), lace)
+        for x in range(40, 56):
+            im_armor2.putpixel((x, y), lace)
+    # Бантик / акцент спереди на поясе
+    im_armor2.putpixel((23, 26), rib)
+    im_armor2.putpixel((24, 26), rib)
+    im_armor2.save(AS / f'textures/models/armor/{key}_panties_layer_2.png')
+
+    # LAYER 1: Надевание на голову (маска из трусиков на лицо с вырезами для глаз и лентой через макушку)
+    im_armor1 = Image.new('RGBA', (64, 32), (0, 0, 0, 0))
+    # Лента через макушку по волосам от лба к затылку (X=10..14, Y=0..8)
+    for y in range(0, 8):
+        for x in range(10, 14):
+            im_armor1.putpixel((x, y), base if y % 2 == 0 else stripe)
+    # Пояс вокруг головы / висков (X=0..32, Y=8..10)
+    for y in range(8, 11):
+        col = lace if y == 8 else base
+        for x in range(0, 32):
+            im_armor1.putpixel((x, y), col)
+    # Маска, спадающая на лицо (X=8..16, Y=11..16)
+    for y in range(11, 16):
+        col = stripe if y % 2 == 1 else base
+        for x in range(8, 16):
+            # Прорези для глаз: X=9..10 и X=13..14 при Y=11..12 остаются прозрачными
+            if y in (11, 12) and (x in (9, 10) or x in (13, 14)):
+                continue
+            im_armor1.putpixel((x, y), col)
+    # Складка на подбородке / носу
+    for y in range(13, 16):
+        for x in range(10, 14):
+            im_armor1.putpixel((x, y), base)
+    # Талисман героини на лбу
+    im_armor1.putpixel((11, 8), rib)
+    im_armor1.putpixel((12, 8), rib)
+    im_armor1.save(AS / f'textures/models/armor/{key}_panties_layer_1.png')
 
 # 2D спрайт гитарного медиатора (16x16)
 im_pick = Image.new('RGBA', (16, 16), (0, 0, 0, 0))

@@ -1,6 +1,7 @@
 package dev.aliska.bocchi;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import eu.pb4.polymer.resourcepack.api.PolymerArmorModel;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifiersComponent;
@@ -27,22 +28,23 @@ import net.minecraft.world.World;
 
 /**
  * Уникальные трусики для каждой героини BTR World.
- * Надеваются в слот поножей/ног (на попу, как обычное бельё) при обычном ПКМ.
- * При Shift + ПКМ можно надеть на голову (как маску без тыквенного оверлея).
- * Дают уникальный бафф героини, проигрывают звук и частицы сердечек.
+ * Используют кастомную текстуру брони Polymer/FancyPants:
+ * - На ногах (ПКМ): надеваются на попу как нижнее бельё (с голыми ножками, а не длинными штанами).
+ * - На голове (Shift + ПКМ): надеваются на лицо и голову как маска (с прорезями для глаз, без тыквенного оверлея).
+ * - В инвентаре: аккуратный 2D пиксель-арт спрайт.
  */
 public final class PantiesItem extends Item implements PolymerItem, Equipment {
     private final CharacterKind kind;
-    private final int color;
+    private final PolymerArmorModel armor;
     private final int model;
 
-    public PantiesItem(CharacterKind kind, int color) {
+    public PantiesItem(CharacterKind kind, PolymerArmorModel armor) {
         super(new Item.Settings()
             .maxCount(1)
-            .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(color, false))
+            .component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(armor.color(), false))
             .component(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT));
         this.kind = kind;
-        this.color = color;
+        this.armor = armor;
         this.model = PolymerResourcePackUtils.requestModel(
             Items.LEATHER_LEGGINGS,
             BocchiMod.id("item/" + kind.id + "_panties")
@@ -53,8 +55,8 @@ public final class PantiesItem extends Item implements PolymerItem, Equipment {
         return kind;
     }
 
-    public int getColor() {
-        return color;
+    public PolymerArmorModel getArmorModel() {
+        return armor;
     }
 
     @Override
@@ -79,7 +81,7 @@ public final class PantiesItem extends Item implements PolymerItem, Equipment {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
 
-        // Shift + ПКМ: надеть на голову (как маску/головной убор без тыквенного оверлея)
+        // Shift + ПКМ: натянуть на голову как маску на лицо
         if (player.isSneaking()) {
             ItemStack currentHead = player.getEquippedStack(EquipmentSlot.HEAD);
             player.equipStack(EquipmentSlot.HEAD, stack.copyWithCount(1));

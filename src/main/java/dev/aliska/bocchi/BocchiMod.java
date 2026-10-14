@@ -230,19 +230,11 @@ public class BocchiMod implements ModInitializer {
         item("maid_dress", new CostumeItem(EquipmentSlot.CHEST, Items.LEATHER_CHESTPLATE, 0x1a1a1f));
         item("maid_skirt", new CostumeItem(EquipmentSlot.LEGS, Items.LEATHER_LEGGINGS, 0x1a1a1f));
 
-        // Уникальные трусики 7 героинь
-        Map<CharacterKind, Integer> pantyColors = Map.of(
-            CharacterKind.BOCCHI, 0xf3a4c8,
-            CharacterKind.NIJIKA, 0xf0ce62,
-            CharacterKind.RYO, 0x4b6d9b,
-            CharacterKind.KITA, 0xc94b57,
-            CharacterKind.SEIKA, 0x252528,
-            CharacterKind.KIKURI, 0x8e3579,
-            CharacterKind.PA_SAN, 0x323140
-        );
+        // Уникальные трусики 7 героинь (кастомная текстура брони FancyPants)
         for (CharacterKind kind : CharacterKind.values()) {
             String name = kind.id + "_panties";
-            PantiesItem item = new PantiesItem(kind, pantyColors.get(kind));
+            var armor = PolymerResourcePackUtils.requestArmor(id(name));
+            PantiesItem item = new PantiesItem(kind, armor);
             item(name, item);
             PANTIES.put(kind, item);
         }
